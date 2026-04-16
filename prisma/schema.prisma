@@ -1,0 +1,82 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Schema {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  definition  Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  documents Document[]
+  results   ExtractionResult[]
+}
+
+model Document {
+  id               String         @id @default(cuid())
+  originalFileName String
+  mimeType         String
+  storagePath      String
+  contentHash      String
+  status           DocumentStatus @default(PENDING)
+  schemaId         String?
+  errorMessage     String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  schema  Schema?           @relation(fields: [schemaId], references: [id])
+  jobs    ExtractionJob[]
+  result  ExtractionResult?
+
+  @@index([contentHash])
+  @@index([status])
+}
+
+model ExtractionJob {
+  id            String    @id @default(cuid())
+  documentId    String
+  attemptNumber Int       @default(1)
+  status        JobStatus @default(QUEUED)
+  errorMessage  String?
+  startedAt     DateTime?
+  completedAt   DateTime?
+  createdAt     DateTime  @default(now())
+
+  document Document @relation(fields: [documentId], references: [id])
+
+  @@index([documentId])
+  @@index([status])
+}
+
+model ExtractionResult {
+  id            String   @id @default(cuid())
+  documentId    String   @unique
+  schemaId      String
+  extractedData Json
+  createdAt     DateTime @default(now())
+
+  document Document @relation(fields: [documentId], references: [id])
+  schema   Schema   @relation(fields: [schemaId], references: [id])
+}
+
+enum DocumentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum JobStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  FAILED
+}
