@@ -23,7 +23,7 @@ export const schemaController = {
     }
   },
 
-  async listAll(req: Request, res: Response, next: NextFunction) {
+  async listAll(_req: Request, res: Response, next: NextFunction) {
     try {
       const schemas = await schemaService.listAll();
       res.json(schemas);
@@ -34,7 +34,7 @@ export const schemaController = {
 
   async getById(req: Request, res: Response, next: NextFunction) {
     try {
-      const schema = await schemaService.getById(req.params.id);
+      const schema = await schemaService.getById(req.params['id'] as string);
       res.json(schema);
     } catch (err: any) {
       if (err.message?.includes('not found')) {

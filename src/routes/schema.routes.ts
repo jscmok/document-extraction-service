@@ -1,10 +1,8 @@
 import { Router } from 'express';
 import { schemaController } from '../controllers/schema.controller';
 
-const router = Router();
+export const schemaRoutes = Router();
 
-router.post('/', schemaController.create);
-router.get('/', schemaController.listAll);
-router.get('/:id', schemaController.getById);
-
-export default router;
+schemaRoutes.post('/', schemaController.create);
+schemaRoutes.get('/', schemaController.listAll);
+schemaRoutes.get('/:id', schemaController.getById);

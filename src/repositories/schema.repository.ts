@@ -8,7 +8,7 @@ export const schemaRepository = {
       data: {
         name: data.name,
         description: data.description ?? null,
-        definition: data.definition,
+        definition: data.definition as object,
       },
     });
   },
