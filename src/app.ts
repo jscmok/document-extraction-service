@@ -1,5 +1,6 @@
 import express from 'express';
 import { env } from './config/env';
+import { schemaRoutes } from './routes/schema.routes'
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok', env: env.NODE_ENV });
 });
 
-// Routes will be added here in Milestone 2 and 3
+// Routes
+app.use('/schemas', schemaRoutes);
 
 export default app;
