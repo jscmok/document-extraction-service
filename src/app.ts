@@ -1,6 +1,7 @@
 import express from 'express';
 import { env } from './config/env';
-import { schemaRoutes } from './routes/schema.routes'
+import { schemaRoutes } from './routes/schema.routes';
+import documentRoutes from './routes/document.routes';
 
 const app = express();
 
@@ -14,5 +15,6 @@ app.get('/health', (_req, res) => {
 
 // Routes
 app.use('/schemas', schemaRoutes);
+app.use('/documents', documentRoutes);
 
 export default app;
