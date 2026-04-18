@@ -45,3 +45,53 @@ app.ts:
 
 server.ts:
 - calls app.listen()
+
+# Milestone 3
+
+same layers as Milestone 2 but for documents and jobs
+
+types:
+- DocumentStatus / JobStatus union types mirroring Prisma enums
+- DocumentResponse full shape (excludes storagePath and contentHash, internal only)
+- DocumentStatusResponse slim shape for polling (id, status, errorMessage, updatedAt)
+
+utils/hash.ts:
+- SHA-256 hash of file content for duplicate detection
+
+lib/upload.ts:
+- Multer diskStorage saving to env.UPLOAD_DIR with unique filename
+- fileFilter to reject non text/plain files
+- 10 MB file size limit
+
+document.repository.ts:
+5 methods, database access without logic
+- create
+- findbyid includes result so extractionresult is fetched
+- findbyhash uses findFirst (hash is index, not unique)
+- updatestatus
+- findpending oldest-first for worker to pick up
+
+job.repository.ts:
+4 methods, database access without logic
+- create with attemptnumber default to 1
+- findnextqueued FIFO, includes document for worker
+- updatestatus sets startedat on RUNNING, completedat on SUCCEEDED/FAILED
+- countattempts for worker to enforce MAX_RETRY_ATTEMPTS
+
+document.service.ts:
+4 methods, business logic decisions
+- upload: validate schemaId → hash file → return existing if duplicate → create doc → queue job
+- getbyid wrapper around repo
+- gesStatus wrapper around repo, returns slim documentstatusresponse
+- reprocess: guard against PROCESSING → reset to PENDING → create new job
+
+document.controller.ts:
+- same pattern as milestone 2
+- upload checks req.file before calling service, returns 202
+- reprocess returns 202, adds 409 Conflict for "currently being processed"
+
+document.routes.ts:
+- upload.single('file') middleware populates req.file before controller runs
+
+app.ts:
+- mounts documentroutes at /documents

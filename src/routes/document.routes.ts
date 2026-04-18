@@ -2,11 +2,9 @@ import { Router } from 'express';
 import { upload } from '../lib/upload';
 import { documentController } from '../controllers/document.controller';
 
-const router = Router();
+export const documentRoutes = Router();
 
-router.post('/', upload.single('file'), documentController.upload);
-router.get('/:id', documentController.getById);
-router.get('/:id/status', documentController.getStatus);
-router.post('/:id/reprocess', documentController.reprocess);
-
-export default router;
+documentRoutes.post('/', upload.single('file'), documentController.upload);
+documentRoutes.get('/:id', documentController.getById);
+documentRoutes.get('/:id/status', documentController.getStatus);
+documentRoutes.post('/:id/reprocess', documentController.reprocess);

@@ -1,7 +1,7 @@
 import express from 'express';
 import { env } from './config/env';
 import { schemaRoutes } from './routes/schema.routes';
-import documentRoutes from './routes/document.routes';
+import { documentRoutes } from './routes/document.routes';
 
 const app = express();
 
