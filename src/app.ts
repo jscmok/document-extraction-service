@@ -2,6 +2,7 @@ import express from 'express';
 import { env } from './config/env';
 import { schemaRoutes } from './routes/schema.routes';
 import { documentRoutes } from './routes/document.routes';
+import { errorHandler } from './middleware/error-handler';
 
 const app = express();
 
@@ -16,5 +17,13 @@ app.get('/health', (_req, res) => {
 // Routes
 app.use('/schemas', schemaRoutes);
 app.use('/documents', documentRoutes);
+
+// 404 for unmatched routes
+app.use((_req, res) => {
+  res.status(404).json({ error: 'Not found' });
+});
+
+// Global error handler
+app.use(errorHandler);
 
 export default app;
