@@ -104,13 +104,13 @@ utils/text-extractor.ts:
 - reads .txt file from disk, returns content as a string
 - only code touching the file system for content
 
-lib/anthropic.ts:
-- Anthropic client created once reused everywhere
+lib/openai.ts:
+- singleton OpenAI client, created once and reused everywhere
 
 extraction.service.ts:
 2 methods, core of service
-- extract: load doc + schema → read file text → build dynamic prompt from schema → call claude → validate JSON response → upsert extractionresult
-- classifydocument: called if no schemaid → if one schema exists return it or else send to Claude to pick best match → fallback to first schema
+- extract: load doc + schema → read file text → build dynamic prompt from schema → call OpenAI → validate JSON response → upsert extractionresult
+- classifydocument: called if no schemaid → if one schema exists return it or else send to OpenAI to pick best match → fallback to first schema
 
 document.worker.ts:
 - polling loop
