@@ -50,6 +50,23 @@ export const documentController = {
     }
   },
 
+  async getResult(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await documentService.getResult(req.params['id'] as string);
+      res.json(result);
+    } catch (err: any) {
+      if (err.message?.includes('not found')) {
+        res.status(404).json({ error: err.message });
+        return;
+      }
+      if (err.message?.includes('not yet completed')) {
+        res.status(409).json({ error: err.message });
+        return;
+      }
+      next(err);
+    }
+  },
+
   async reprocess(req: Request, res: Response, next: NextFunction) {
     try {
       const doc = await documentService.reprocess(req.params['id'] as string);

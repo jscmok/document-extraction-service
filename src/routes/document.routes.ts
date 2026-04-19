@@ -7,4 +7,5 @@ export const documentRoutes = Router();
 documentRoutes.post('/', upload.single('file'), documentController.upload);
 documentRoutes.get('/:id', documentController.getById);
 documentRoutes.get('/:id/status', documentController.getStatus);
+documentRoutes.get('/:id/result', documentController.getResult);
 documentRoutes.post('/:id/reprocess', documentController.reprocess);

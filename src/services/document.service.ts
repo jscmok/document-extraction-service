@@ -66,6 +66,27 @@ export const documentService = {
     };
   },
 
+  async getResult(id: string) {
+    const doc = await documentRepository.findById(id);
+    if (!doc) throw new Error(`Document with id "${id}" not found`);
+
+    if (doc.status !== 'COMPLETED') {
+      throw new Error(`Document is not yet completed. Current status: ${doc.status}`);
+    }
+
+    if (!doc.result) {
+      throw new Error('No extraction result found for this document');
+    }
+
+    return {
+      documentId: id,
+      schemaId: doc.schemaId,
+      status: doc.status,
+      extractedData: doc.result.extractedData,
+      extractedAt: doc.result.createdAt,
+    };
+  },
+
   async reprocess(id: string): Promise<DocumentResponse> {
     const doc = await documentRepository.findById(id);
     if (!doc) throw new Error(`Document with id "${id}" not found`);
