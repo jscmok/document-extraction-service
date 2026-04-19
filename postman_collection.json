@@ -1,0 +1,1943 @@
+{
+  "info": {
+    "_postman_id": "8f91ef0b-f7f0-4e5c-bd24-3cfe0bda8a58",
+    "name": "SDES",
+    "description": "### Welcome to Postman! This is your first collection. \n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests\n• Test your API in real-world scenarios\n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54119014",
+    "_collection_link": "https://go.postman.co/collection/54119014-8f91ef0b-f7f0-4e5c-bd24-3cfe0bda8a58?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/health",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "health"
+          ]
+        },
+        "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+      },
+      "response": [
+        {
+          "name": "Health",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/health",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "35"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"23-zT8cXHcxJVuQeQGVjXxm4LgTF7M\""
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 18 Apr 2026 02:59:20 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"status\": \"ok\",\n    \"env\": \"development\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Post data",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Successful POST request\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+              "});",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/schemas",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "schemas"
+          ]
+        },
+        "description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+      },
+      "response": []
+    },
+    {
+      "name": "/schemas",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"invoice\",\r\n    \"description\": \"Extract invoice fields\",\r\n    \"definition\": {\r\n      \"type\": \"object\",\r\n      \"properties\": {\r\n        \"vendorName\": { \"type\": \"string\" },\r\n        \"invoiceNumber\": { \"type\": \"string\" },\r\n        \"totalAmount\": { \"type\": \"number\" }\r\n      },\r\n      \"required\": [\"vendorName\", \"invoiceNumber\", \"totalAmount\"]\r\n    }\r\n  }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/schemas",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "schemas"
+          ]
+        },
+        "description": "Generated from cURL: curl -X POST http://localhost:3000/schemas \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"name\": \"invoice\",\r\n    \"description\": \"Extract invoice fields\",\r\n    \"definition\": {\r\n      \"type\": \"object\",\r\n      \"properties\": {\r\n        \"vendorName\": { \"type\": \"string\" },\r\n        \"invoiceNumber\": { \"type\": \"string\" },\r\n        \"totalAmount\": { \"type\": \"number\" }\r\n      },\r\n      \"required\": [\"vendorName\", \"invoiceNumber\", \"totalAmount\"]\r\n    }\r\n  }'"
+      },
+      "response": [
+        {
+          "name": "400 schema already exists",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"invoice\",\r\n    \"description\": \"Extract invoice fields\",\r\n    \"definition\": {\r\n      \"type\": \"object\",\r\n      \"properties\": {\r\n        \"vendorName\": { \"type\": \"string\" },\r\n        \"invoiceNumber\": { \"type\": \"string\" },\r\n        \"totalAmount\": { \"type\": \"number\" }\r\n      },\r\n      \"required\": [\"vendorName\", \"invoiceNumber\", \"totalAmount\"]\r\n    }\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/schemas",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "schemas"
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "55"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"37-Knh3toWJBTZOeHB8q3x3a+2rtmc\""
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 18 Apr 2026 03:06:16 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"error\": \"Schema with name \\\"invoice\\\" already exists\"\n}"
+        },
+        {
+          "name": "400 name and def req",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"nam\": \"invoice\",\r\n    \"description\": \"Extract invoice fields\",\r\n    \"definition\": {\r\n      \"type\": \"object\",\r\n      \"properties\": {\r\n        \"vendorName\": { \"type\": \"string\" },\r\n        \"invoiceNumber\": { \"type\": \"string\" },\r\n        \"totalAmount\": { \"type\": \"number\" }\r\n      },\r\n      \"required\": [\"vendorName\", \"invoiceNumber\", \"totalAmount\"]\r\n    }\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/schemas",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "schemas"
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "44"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"2c-puZ2oIzgDYX5uZJp0SBp4cZ7dB8\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 12:40:38 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"error\": \"name and definition are required\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "/schemas",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/schemas",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "schemas"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "/schemas",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/schemas",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "schemas"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "369"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"171-qsQ1EKrUaVoPbXFuzfhq2SXu3rQ\""
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 18 Apr 2026 03:03:35 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "[\n    {\n        \"id\": \"cmo3kv28q0000rj9ceftsdss7\",\n        \"name\": \"invoice\",\n        \"description\": \"Extract invoice fields\",\n        \"definition\": {\n            \"type\": \"object\",\n            \"required\": [\n                \"vendorName\",\n                \"invoiceNumber\",\n                \"totalAmount\"\n            ],\n            \"properties\": {\n                \"vendorName\": {\n                    \"type\": \"string\"\n                },\n                \"totalAmount\": {\n                    \"type\": \"number\"\n                },\n                \"invoiceNumber\": {\n                    \"type\": \"string\"\n                }\n            }\n        },\n        \"createdAt\": \"2026-04-18T00:07:06.266Z\",\n        \"updatedAt\": \"2026-04-18T00:07:06.266Z\"\n    }\n]"
+        }
+      ]
+    },
+    {
+      "name": "/schemas/:id",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/schemas/cmo3kv28q0000rj9ceftsdss7",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "schemas",
+            "cmo3kv28q0000rj9ceftsdss7"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "/schemas/:id",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/schemas/cmo3kv28q0000rj9ceftsdss7",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "schemas",
+                "cmo3kv28q0000rj9ceftsdss7"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "367"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"16f-Q3de6QBtd0E7ccny4zejS0uH6Q4\""
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 18 Apr 2026 03:09:07 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"id\": \"cmo3kv28q0000rj9ceftsdss7\",\n    \"name\": \"invoice\",\n    \"description\": \"Extract invoice fields\",\n    \"definition\": {\n        \"type\": \"object\",\n        \"required\": [\n            \"vendorName\",\n            \"invoiceNumber\",\n            \"totalAmount\"\n        ],\n        \"properties\": {\n            \"vendorName\": {\n                \"type\": \"string\"\n            },\n            \"totalAmount\": {\n                \"type\": \"number\"\n            },\n            \"invoiceNumber\": {\n                \"type\": \"string\"\n            }\n        }\n    },\n    \"createdAt\": \"2026-04-18T00:07:06.266Z\",\n    \"updatedAt\": \"2026-04-18T00:07:06.266Z\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "/documents",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "type": "file",
+              "key": "file",
+              "src": "/C:/Repos/SDES/document-extraction-service/test-invoice-02.txt"
+            },
+            {
+              "type": "text",
+              "key": "schemaId",
+              "value": "cmo3kv28q0000rj9ceftsdss7"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:3000/documents",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "documents"
+          ]
+        },
+        "description": "Generated from cURL: curl -X POST http://localhost:3000/documents \\\r\n  -F \"file=@test-invoice.txt\" \\\r\n  -F \"schemaId=YOUR_SCHEMA_ID_HERE\""
+      },
+      "response": [
+        {
+          "name": "/documents 1",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "type": "file",
+                  "key": "file",
+                  "src": "/C:/Repos/SDES/document-extraction-service/test-invoice.txt"
+                },
+                {
+                  "type": "text",
+                  "key": "schemaId",
+                  "value": "cmo3kv28q0000rj9ceftsdss7"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3000/documents",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents"
+              ]
+            }
+          },
+          "status": "Accepted",
+          "code": 202,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "252"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"fc-cbPJJo8DG31H9SIqAdAVvDbOhPY\""
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 18 Apr 2026 20:45:21 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"id\": \"cmo4st1sf0001rjccwfr4gdtz\",\n    \"originalFileName\": \"test-invoice.txt\",\n    \"mimeType\": \"text/plain\",\n    \"status\": \"PENDING\",\n    \"schemaId\": \"cmo3kv28q0000rj9ceftsdss7\",\n    \"errorMessage\": null,\n    \"createdAt\": \"2026-04-18T20:37:15.471Z\",\n    \"updatedAt\": \"2026-04-18T20:37:15.471Z\"\n}"
+        },
+        {
+          "name": "/documents no file",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "type": "file",
+                  "key": "file",
+                  "value": null
+                },
+                {
+                  "type": "text",
+                  "key": "schemaId",
+                  "value": "cmo3kv28q0000rj9ceftsdss7"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3000/documents",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents"
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "28"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"1c-onk6IZjTjlvdo7oEedoK8CJs0As\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 14:12:34 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"error\": \"No file uploaded\"\n}"
+        },
+        {
+          "name": "/documents 2",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "type": "file",
+                  "key": "file",
+                  "src": "/C:/Repos/SDES/document-extraction-service/test-invoice-02.txt"
+                },
+                {
+                  "type": "text",
+                  "key": "schemaId",
+                  "value": "cmo3kv28q0000rj9ceftsdss7"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3000/documents",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents"
+              ]
+            }
+          },
+          "status": "Accepted",
+          "code": 202,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "255"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"ff-qzBi2ZfxbSnqmVAKXeLLZl8Q9pM\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 14:13:25 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"id\": \"cmo5uja0p0001rj3cbs0h7pt0\",\n    \"originalFileName\": \"test-invoice-02.txt\",\n    \"mimeType\": \"text/plain\",\n    \"status\": \"PENDING\",\n    \"schemaId\": \"cmo3kv28q0000rj9ceftsdss7\",\n    \"errorMessage\": null,\n    \"createdAt\": \"2026-04-19T14:13:24.981Z\",\n    \"updatedAt\": \"2026-04-19T14:13:24.981Z\"\n}"
+        },
+        {
+          "name": "/documents edited 2",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "type": "file",
+                  "key": "file",
+                  "src": "/C:/Repos/SDES/document-extraction-service/test-invoice-02.txt"
+                },
+                {
+                  "type": "text",
+                  "key": "schemaId",
+                  "value": "cmo3kv28q0000rj9ceftsdss7"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3000/documents",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents"
+              ]
+            }
+          },
+          "status": "Accepted",
+          "code": 202,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "255"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"ff-oggUXnz3wzZRm+2WBQbN9+xUXdk\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 14:21:54 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"id\": \"cmo5uu70l000brj3c2l8p6ovj\",\n    \"originalFileName\": \"test-invoice-02.txt\",\n    \"mimeType\": \"text/plain\",\n    \"status\": \"PENDING\",\n    \"schemaId\": \"cmo3kv28q0000rj9ceftsdss7\",\n    \"errorMessage\": null,\n    \"createdAt\": \"2026-04-19T14:21:54.310Z\",\n    \"updatedAt\": \"2026-04-19T14:21:54.310Z\"\n}"
+        },
+        {
+          "name": "/documents 4",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "type": "file",
+                  "key": "file",
+                  "src": "/C:/Repos/SDES/document-extraction-service/test-invoice-04.txt"
+                },
+                {
+                  "type": "text",
+                  "key": "schemaId",
+                  "value": "cmo3kv28q0000rj9ceftsdss7"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3000/documents",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents"
+              ]
+            }
+          },
+          "status": "Accepted",
+          "code": 202,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "255"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"ff-B4C6bZtJsF5BQq+yH3/spuIRS44\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 15:29:02 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"id\": \"cmo5x8j0t0001rj48rfy4hip0\",\n    \"originalFileName\": \"test-invoice-04.txt\",\n    \"mimeType\": \"text/plain\",\n    \"status\": \"PENDING\",\n    \"schemaId\": \"cmo3kv28q0000rj9ceftsdss7\",\n    \"errorMessage\": null,\n    \"createdAt\": \"2026-04-19T15:29:02.279Z\",\n    \"updatedAt\": \"2026-04-19T15:29:02.279Z\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "/documents/:id",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/documents/cmo5uja0p0001rj3cbs0h7pt0",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "documents",
+            "cmo5uja0p0001rj3cbs0h7pt0"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "/documents/cmo5uja0p0001rj3cbs0h7pt0",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/documents/cmo5uja0p0001rj3cbs0h7pt0",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents",
+                "cmo5uja0p0001rj3cbs0h7pt0"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "257"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"101-QqZW6VnJNdgHgZTWHA94G4BHx9E\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 14:15:54 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"id\": \"cmo5uja0p0001rj3cbs0h7pt0\",\n    \"originalFileName\": \"test-invoice-02.txt\",\n    \"mimeType\": \"text/plain\",\n    \"status\": \"COMPLETED\",\n    \"schemaId\": \"cmo3kv28q0000rj9ceftsdss7\",\n    \"errorMessage\": null,\n    \"createdAt\": \"2026-04-19T14:13:24.981Z\",\n    \"updatedAt\": \"2026-04-19T14:13:31.864Z\"\n}"
+        },
+        {
+          "name": "/documents/cmo5x8j0t0001rj48rfy4hip0",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/documents/cmo5x8j0t0001rj48rfy4hip0",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents",
+                "cmo5x8j0t0001rj48rfy4hip0"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "255"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"ff-B4C6bZtJsF5BQq+yH3/spuIRS44\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 15:29:20 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"id\": \"cmo5x8j0t0001rj48rfy4hip0\",\n    \"originalFileName\": \"test-invoice-04.txt\",\n    \"mimeType\": \"text/plain\",\n    \"status\": \"PENDING\",\n    \"schemaId\": \"cmo3kv28q0000rj9ceftsdss7\",\n    \"errorMessage\": null,\n    \"createdAt\": \"2026-04-19T15:29:02.279Z\",\n    \"updatedAt\": \"2026-04-19T15:29:02.279Z\"\n}"
+        },
+        {
+          "name": "/documents/cmo5x8j0t0001rj48rfy4hip0",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/documents/cmo5x8j0t0001rj48rfy4hip0",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents",
+                "cmo5x8j0t0001rj48rfy4hip0"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "366"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"16e-XssSc4cTuhDXqVxFLpcbAFZ3p0c\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 15:31:54 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"id\": \"cmo5x8j0t0001rj48rfy4hip0\",\n    \"originalFileName\": \"test-invoice-04.txt\",\n    \"mimeType\": \"text/plain\",\n    \"status\": \"FAILED\",\n    \"schemaId\": \"cmo3kv28q0000rj9ceftsdss7\",\n    \"errorMessage\": \"401 Incorrect API key provided: sk-.... You can find your API key at https://platform.openai.com/account/api-keys.\",\n    \"createdAt\": \"2026-04-19T15:29:02.279Z\",\n    \"updatedAt\": \"2026-04-19T15:30:30.011Z\"\n}"
+        },
+        {
+          "name": "/documents/dneid",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/documents/dneid",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents",
+                "dneid"
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "48"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"30-UNavD3mlRAz99UXFR0P4s4dDvqY\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 16:45:12 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"error\": \"Document with id \\\"dneid\\\" not found\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "/documents/:id/status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/documents/cmo4st1sf0001rjccwfr4gdtz/status",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "documents",
+            "cmo4st1sf0001rjccwfr4gdtz",
+            "status"
+          ]
+        },
+        "description": "Generated from cURL: curl http://localhost:3000/documents/YOUR_DOCUMENT_ID/status"
+      },
+      "response": [
+        {
+          "name": "/documents/cmo4st1sf0001rjccwfr4gdtz/status",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/documents/cmo4st1sf0001rjccwfr4gdtz/status",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents",
+                "cmo4st1sf0001rjccwfr4gdtz",
+                "status"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "112"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"70-E7RbFq+YbCNnBA7C5C1Um6w4DQI\""
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 18 Apr 2026 20:39:22 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"id\": \"cmo4st1sf0001rjccwfr4gdtz\",\n    \"status\": \"PENDING\",\n    \"errorMessage\": null,\n    \"updatedAt\": \"2026-04-18T20:37:15.471Z\"\n}"
+        },
+        {
+          "name": "/documents/cmo4st1sf0001rjccwfr4gdtz/status",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/documents/cmo4st1sf0001rjccwfr4gdtz/status",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents",
+                "cmo4st1sf0001rjccwfr4gdtz",
+                "status"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "114"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"72-Gx+sdmuveaqNKaVtAqHdrQl/fwg\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 03:32:41 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"id\": \"cmo4st1sf0001rjccwfr4gdtz\",\n    \"status\": \"COMPLETED\",\n    \"errorMessage\": null,\n    \"updatedAt\": \"2026-04-19T03:31:07.375Z\"\n}"
+        },
+        {
+          "name": "/documents/cmo5uja0p0001rj3cbs0h7pt0/status",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/documents/cmo5uja0p0001rj3cbs0h7pt0/status",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents",
+                "cmo5uja0p0001rj3cbs0h7pt0",
+                "status"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "114"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"72-kgpsjf8oM6Z+6dn4wNmjm0q/HPo\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 14:15:07 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"id\": \"cmo5uja0p0001rj3cbs0h7pt0\",\n    \"status\": \"COMPLETED\",\n    \"errorMessage\": null,\n    \"updatedAt\": \"2026-04-19T14:13:31.864Z\"\n}"
+        },
+        {
+          "name": "/documents/DNE/status",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/documents/DNE/status",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents",
+                "DNE",
+                "status"
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "46"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"2e-WeSVebWeQLFJZL93DnTgdBllWUY\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 14:18:33 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"error\": \"Document with id \\\"DNE\\\" not found\"\n}"
+        },
+        {
+          "name": "/documents/cmo5x8j0t0001rj48rfy4hip0/status",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/documents/cmo5x8j0t0001rj48rfy4hip0/status",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents",
+                "cmo5x8j0t0001rj48rfy4hip0",
+                "status"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "112"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"70-LPHqrVPutMcPRrMZWRM2Xeg2A8E\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 15:29:25 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"id\": \"cmo5x8j0t0001rj48rfy4hip0\",\n    \"status\": \"PENDING\",\n    \"errorMessage\": null,\n    \"updatedAt\": \"2026-04-19T15:29:02.279Z\"\n}"
+        },
+        {
+          "name": "/documents/cmo5x8j0t0001rj48rfy4hip0/status",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/documents/cmo5x8j0t0001rj48rfy4hip0/status",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents",
+                "cmo5x8j0t0001rj48rfy4hip0",
+                "status"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "223"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"df-emYYqlnR5kQ7CjlVl60QHHK1K4Y\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 15:32:05 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"id\": \"cmo5x8j0t0001rj48rfy4hip0\",\n    \"status\": \"FAILED\",\n    \"errorMessage\": \"401 Incorrect API key provided: sk-.... You can find your API key at https://platform.openai.com/account/api-keys.\",\n    \"updatedAt\": \"2026-04-19T15:30:30.011Z\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "/documents/:id/reprocess",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/documents/cmo4st1sf0001rjccwfr4gdtz/reprocess",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "documents",
+            "cmo4st1sf0001rjccwfr4gdtz",
+            "reprocess"
+          ]
+        },
+        "description": "Generated from cURL: curl -X POST http://localhost:3000/documents/YOUR_DOCUMENT_ID/reprocess"
+      },
+      "response": [
+        {
+          "name": "/documents/cmo4st1sf0001rjccwfr4gdtz\\/reprocess",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/documents/cmo4st1sf0001rjccwfr4gdtz/reprocess",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents",
+                "cmo4st1sf0001rjccwfr4gdtz",
+                "reprocess"
+              ]
+            }
+          },
+          "status": "Accepted",
+          "code": 202,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "252"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"fc-1XfVAW8AF+QtGXMmATD2uKsU3zM\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 03:31:03 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"id\": \"cmo4st1sf0001rjccwfr4gdtz\",\n    \"originalFileName\": \"test-invoice.txt\",\n    \"mimeType\": \"text/plain\",\n    \"status\": \"PENDING\",\n    \"schemaId\": \"cmo3kv28q0000rj9ceftsdss7\",\n    \"errorMessage\": null,\n    \"createdAt\": \"2026-04-18T20:37:15.471Z\",\n    \"updatedAt\": \"2026-04-19T03:30:29.019Z\"\n}"
+        },
+        {
+          "name": "/documents/cmo5uja0p0001rj3cbs0h7pt0/reprocess",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/documents/cmo5uja0p0001rj3cbs0h7pt0/reprocess",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents",
+                "cmo5uja0p0001rj3cbs0h7pt0",
+                "reprocess"
+              ]
+            }
+          },
+          "status": "Accepted",
+          "code": 202,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "255"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"ff-5Dj7kPbXSAH8I5iRAr3AqtG7Ovs\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 14:19:46 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"id\": \"cmo5uja0p0001rj3cbs0h7pt0\",\n    \"originalFileName\": \"test-invoice-02.txt\",\n    \"mimeType\": \"text/plain\",\n    \"status\": \"PENDING\",\n    \"schemaId\": \"cmo3kv28q0000rj9ceftsdss7\",\n    \"errorMessage\": null,\n    \"createdAt\": \"2026-04-19T14:13:24.981Z\",\n    \"updatedAt\": \"2026-04-19T14:13:31.864Z\"\n}"
+        },
+        {
+          "name": "/documents/DNE/reprocess",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/documents/DNE/reprocess",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents",
+                "DNE",
+                "reprocess"
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "46"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"2e-WeSVebWeQLFJZL93DnTgdBllWUY\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 14:19:19 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"error\": \"Document with id \\\"DNE\\\" not found\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "/documents/:id/result",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/documents/cmo4st1sf0001rjccwfr4gdtz/result",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "documents",
+            "cmo4st1sf0001rjccwfr4gdtz",
+            "result"
+          ]
+        },
+        "description": "Generated from cURL: curl http://localhost:3000/documents/YOUR_DOCUMENT_ID/result"
+      },
+      "response": [
+        {
+          "name": "/documents/cmo4st1sf0001rjccwfr4gdtz/result",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/documents/cmo4st1sf0001rjccwfr4gdtz/result",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents",
+                "cmo4st1sf0001rjccwfr4gdtz",
+                "result"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "232"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"e8-YQdB1UWETUkqglvGYU/sRXD9bw4\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 15:10:22 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"documentId\": \"cmo4st1sf0001rjccwfr4gdtz\",\n    \"schemaId\": \"cmo3kv28q0000rj9ceftsdss7\",\n    \"status\": \"COMPLETED\",\n    \"extractedData\": {\n        \"vendorName\": \"Gentle Inc.\",\n        \"totalAmount\": 500,\n        \"invoiceNumber\": \"INV-001\"\n    },\n    \"extractedAt\": \"2026-04-19T03:30:28.912Z\"\n}"
+        },
+        {
+          "name": "/documents/cmo5uu70l000brj3c2l8p6ovj/result",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/documents/cmo5uu70l000brj3c2l8p6ovj/result",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents",
+                "cmo5uu70l000brj3c2l8p6ovj",
+                "result"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "233"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"e9-zyP+Gd8suZz7VR6biNHdEgDqbds\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 15:12:20 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"documentId\": \"cmo5uu70l000brj3c2l8p6ovj\",\n    \"schemaId\": \"cmo3kv28q0000rj9ceftsdss7\",\n    \"status\": \"COMPLETED\",\n    \"extractedData\": {\n        \"vendorName\": \"AIGENTLE Inc.\",\n        \"totalAmount\": 67,\n        \"invoiceNumber\": \"INV-002\"\n    },\n    \"extractedAt\": \"2026-04-19T14:22:06.231Z\"\n}"
+        },
+        {
+          "name": "/documents/cmo5x8j0t0001rj48rfy4hip0/result",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/documents/cmo5x8j0t0001rj48rfy4hip0/result",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents",
+                "cmo5x8j0t0001rj48rfy4hip0",
+                "result"
+              ]
+            }
+          },
+          "status": "Conflict",
+          "code": 409,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "66"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"42-uXgKXmnxaqlp5oEZzjuScn+ERWE\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 15:29:30 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"error\": \"Document is not yet completed. Current status: PENDING\"\n}"
+        },
+        {
+          "name": "/documents/cmo5x8j0t0001rj48rfy4hip0result",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/documents/cmo5x8j0t0001rj48rfy4hip0/result",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "documents",
+                "cmo5x8j0t0001rj48rfy4hip0",
+                "result"
+              ]
+            }
+          },
+          "status": "Conflict",
+          "code": 409,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "65"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"41-zkbRqLcUc/YrvQ+mLlAMYDmSvHw\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 15:32:20 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"error\": \"Document is not yet completed. Current status: FAILED\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "http://localhost:3000/nonexistent",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/nonexistent",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "nonexistent"
+          ]
+        },
+        "description": "Generated from cURL: curl http://localhost:3000/nonexistent"
+      },
+      "response": [
+        {
+          "name": "http://localhost:3000/nonexistent",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/nonexistent",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "nonexistent"
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "21"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"15-bm7tJgu8FHlq5QU+Y6gDxOGPfRc\""
+            },
+            {
+              "key": "Date",
+              "value": "Sun, 19 Apr 2026 16:44:49 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"error\": \"Not found\"\n}"
+        }
+      ]
+    }
+  ]
+}

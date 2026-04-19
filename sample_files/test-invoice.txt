@@ -1,0 +1,1 @@
+Invoice from Gentle Inc.. Invoice number: INV-001. Total amount: 500. Vendor: Gentle Inc.

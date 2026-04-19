@@ -1,0 +1,1 @@
+Invoice X Mess up fields and schema Inc.  number INV-010. Total: 500. Vendor:! Description: freetext

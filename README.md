@@ -1,122 +1,209 @@
 # Document Extraction Service
 
-# Milestone 2
-layers of methods split into different files:
-- repository to talk to db using Prisma and SQL
-- service to handle business rules and validations
-- controller to talk to HTTP and handle requests, responses, status codes
+A schema-driven document extraction service (SDES) that receives schemas, ingests documents, extracts structured, queryable data using LLM. Users define extraction schemas ahead of time, upload documents, and the system asynchronously extracts structured JSON output that conforms to the defined schema.
 
-types:
-separate from prisma types so if db modfel changes, this controls what is exposed in api
-- schemaDTO for shape that comes from a POST request
- - definition Record<string,unknown> because it is a JSON schema object with an unknown key-value structure
-- schemaResponse for shape of response sent back to caller
- - includes original fields and auto-generated fields (id, createdat, updatedat)
+Multiple document types via runtime schema definition:
+The service supports any document type (eg. invoice, contract, employees, medical record, etc). Users define schemas via POST /schemas using standard JSON Schema format that are stored in the database. SDES builds extraction prompts dynamically at runtime. Adding a new document type is a single API call, not a deployment.
 
-repository:
-4 methods, database access without logic
-- create
-- findall to return rows by newest
-- findbyid to find on ID PK
-- findbyname to find on name unique index
+---
 
-service:
-3 methods, business logic decisions with validation and checks
-- toResponse() as a mapper to convert Prisma row to SchemaResponse (align API shape with DB shape)
-- create
- - ajv to validate schema as valid JSON
- - findbyname to detct duplicates
- - repository can write to db
-- listall wrapper around repo
-- getbyid wrapper around repo, converts null to error
+## How it works
 
-controller:
-- HTTP in and out
-- parse -> validate inputs -> call service -> send response -> catch errors
-- "create" API response of 201 if created, 400 if exists or missing input
-- "listall" API response of 200 with array
-- "getbyid" API response of id, 404 if not found
+1. Define a schema 
+— POST a JSON Schema definition with the fields (e.g. name, invoice number, amount)
+2. Upload a document
+— POST a .txt file while (optionally) referencing a schema
+3. Worker processes
+— background worker picks up the job, reads the file, builds a dynamic prompt from stored schema, calls OpenAI API, validates the response, then saves the result
+4. Fetch the result 
+— GET the structured extracted data from the database
 
-routes:
-- Express router mapping API methods used in app.ts
+---
 
-app.ts:
-- builds express app
+## Tech stack
 
-server.ts:
-- calls app.listen()
+| Category | Choice |
+|---|---|
+| Language | TypeScript |
+| Framework | Express |
+| ORM | Prisma |
+| Database | PostgreSQL |
+| File uploads | Multer |
+| JSON validation | Ajv |
+| LLM | OpenAI API |
+| Tests | Vitest |
 
-# Milestone 3
+---
 
-same layers as Milestone 2 but for documents and jobs
+## Deliberate decisions
 
-types:
-- DocumentStatus / JobStatus union types mirroring Prisma enums
-- DocumentResponse full shape (excludes storagePath and contentHash, internal only)
-- DocumentStatusResponse slim shape for polling (id, status, errorMessage, updatedAt)
+| Decision | Reason |
+|---|---|
+| .txt files only | LLMs operate on text. PDF/Word (other file types) support require the addition of `pdf-parse` or `mammoth` to text-extractor.ts — the rest of the pipeline requires no changes |
+| DB-backed worker instead of BullMQ/Redis | Removes Redis dependency for self-contained SDES submission. In production, SQS or BullMQ would provide better infra for proper queues with job states, events, priority, concurrency, retries, job visibility |
+| Local file storage instead of S3 | Keeps submission runnable without cloud credentials. In production, files would be stored in S3 with object keys persisted in the db |
+| PostGreSQL | I considered NoSQL, but quickly crossed out given the SDES features user-defined (aka known) schemas and relationships would be harder to enforce. The data objects also have relationships that are defined by a relational model with PK and FKs, easier to enforce. PostGres also has native JSONB support allowing flexible JSON blobs from schema definitions and extraction results. |
+| PostGreSQL | I considered NoSQL, but quickly crossed out given the SDES features user-defined (aka known) schemas and relationships would be harder to enforce. The data objects also have relationships that are defined by a relational model with PK and FKs, easier to enforce. PostGres also has native JSONB support allowing flexible JSON blobs from schema definitions and extraction results. |
 
-utils/hash.ts:
-- SHA-256 hash of file content for duplicate detection
+---
 
-lib/upload.ts:
-- Multer diskStorage saving to env.UPLOAD_DIR with unique filename
-- fileFilter to reject non text/plain files
-- 10 MB file size limit
+## Production grade system (AWS)
 
-document.repository.ts:
-5 methods, database access without logic
-- create
-- findbyid includes result so extractionresult is fetched
-- findbyhash uses findFirst (hash is index, not unique)
-- updatestatus
-- findpending oldest-first for worker to pick up
+- API and Worker: ECS or Kubernetes
+- Database: RDS PostgreSQL or Aurora
+- Document Storage: S3
+- Job Queueing with DLQ: SQS or BullMQ
+- Observability: CloudWatch or Datadog
+- Key Management: Secrets Manager
 
-job.repository.ts:
-4 methods, database access without logic
-- create with attemptnumber default to 1
-- findnextqueued FIFO, includes document for worker
-- updatestatus sets startedat on RUNNING, completedat on SUCCEEDED/FAILED
-- countattempts for worker to enforce MAX_RETRY_ATTEMPTS
+## Running locally
 
-document.service.ts:
-4 methods, business logic decisions
-- upload: validate schemaId → hash file → return existing if duplicate → create doc → queue job
-- getbyid wrapper around repo
-- gesStatus wrapper around repo, returns slim documentstatusresponse
-- reprocess: guard against PROCESSING → reset to PENDING → create new job
+### Prerequisites
+- Node.js 18+
+- PostgreSQL database (local or hosted)
+- OpenAI API key
 
-document.controller.ts:
-- same pattern as milestone 2
-- upload checks req.file before calling service, returns 202
-- reprocess returns 202, adds 409 Conflict for "currently being processed"
+### Setup
 
-document.routes.ts:
-- upload.single('file') middleware populates req.file before controller runs
+```bash
+git clone https://github.com/YOUR_USERNAME/document-extraction-service
+cd document-extraction-service
+npm install
+cp .env.example .env
+```
 
-app.ts:
-- mounts documentroutes at /documents
+Fill in `.env`:
+```bash
+DATABASE_URL="postgresql://user:password@host:5432/dbname?sslmode=require"
+OPENAI_API_KEY="sk-..."
+PORT=3000
+NODE_ENV="development"
+UPLOAD_DIR="uploads"
+WORKER_POLL_INTERVAL_MS=3000
+MAX_RETRY_ATTEMPTS=3
+```
 
-# Milestone 4
+```bash
+mkdir uploads
+npx prisma migrate dev --name init
+npm run dev
+```
 
-async engine that makes the 202 pattern real — worker picks up queued jobs and runs the extraction pipeline
+Server runs at `http://localhost:3000`.
 
-utils/text-extractor.ts:
-- reads .txt file from disk, returns content as a string
-- only code touching the file system for content
+### Database options
 
-lib/openai.ts:
-- singleton OpenAI client, created once and reused everywhere
+Hosted: 
+Create a free project at (https://neon.tech), copy the connection string into .env DATABASE_URL.
 
-extraction.service.ts:
-2 methods, core of service
-- extract: load doc + schema → read file text → build dynamic prompt from schema → call OpenAI → validate JSON response → upsert extractionresult
-- classifydocument: called if no schemaid → if one schema exists return it or else send to OpenAI to pick best match → fallback to first schema
+Local: 
+Install PostgreSQL, create a database called extraction_db, and set DATABASE_URL="postgresql://postgres:password@localhost:5432/extraction_db".
 
-document.worker.ts:
-- polling loop
-- processnextjob: pick up next QUEUED job → mark job RUNNING and doc PROCESSING → call extractionservice → if success mark SUCCEEDED/COMPLETED or if failure check MAX_RETRY_ATTEMPTS → re-queue or mark FAILED
-- startworker: guards against double-start with running flag, calls poll() recursively via setTimeout in finally block so errors don't stop the loop
-- stopWorker: clean shutdown
+---
 
-server.ts:
-- calls startworker() after DB connects
+## API
+
+## Postman
+Also included in postman_collection.json
+
+### Schemas
+
+```
+POST   /schemas          Create a schema
+GET    /schemas          List all schemas
+GET    /schemas/:id      Get a schema by ID
+```
+
+**Create schema example:**
+```bash
+POST http://localhost:3000/schemas \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "invoice",
+    "description": "Extract invoice fields",
+    "definition": {
+      "type": "object",
+      "properties": {
+        "vendorName": { "type": "string" },
+        "invoiceNumber": { "type": "string" },
+        "totalAmount": { "type": "number" }
+      },
+      "required": ["vendorName", "invoiceNumber", "totalAmount"]
+    }
+  }'
+```
+
+### Documents
+
+```
+POST   /documents                  Upload a document (multipart/form-data)
+GET    /documents/:id              Get document metadata
+GET    /documents/:id/status       Get processing status
+GET    /documents/:id/result       Get extracted data
+POST   /documents/:id/reprocess    Re-queue for extraction
+```
+
+**Upload document example:**
+
+curl -X POST http://localhost:3000/documents \
+  -F "file=@invoice.txt" \
+  -F "schemaId=YOUR_SCHEMA_ID"
+
+
+**Poll status, then fetch result:**
+
+curl http://localhost:3000/documents/YOUR_DOCUMENT_ID/status
+curl http://localhost:3000/documents/YOUR_DOCUMENT_ID/result
+
+
+### Health check
+
+GET    /health
+
+---
+
+## Document lifecycle
+
+Upload → PENDING → PROCESSING → COMPLETED
+                     ↘ FAILED → (reprocess) → PENDING
+
+Processing is asynchronous. The upload endpoint always returns 202 Accepted. GET /documents/:id/status to know when extraction is complete.
+
+---
+
+## Running tests
+
+npm test
+
+Tests cover:
+- Schema service — duplicate detection, invalid schema rejection
+- Extraction service — valid extraction, invalid JSON from LLM, schema validation failure
+- Document API — HTTP status codes, response shapes, error handling
+
+---
+
+## Key design decisions
+
+Schema-driven extraction (not hard-coded)
+Document types and extraction fields are defined at runtime via the API and stored in the database. The LLM prompt is built dynamically from the stored JSON Schema definition, avoiding hard-coded logic (eg. `if (type === 'invoice')` ).
+
+Asynchronous processing
+Document upload returns 202 Accepted immediately. A DB-backed polling worker handles extraction asynchronously. This displays production ingestion behavior where LLM calls can take several seconds and should not hang the HTTP response.
+
+Idempotent uploads via content hash (handles dupe submissions)
+Each uploaded file is SHA-256 hashed so uploading the same file multiple times returns the existing document record rather than creating a duplicate. This handles retried uploads.
+
+Status tracking table
+With the Document and the ExtractionJob tables, they both hold status columns to track status of whether a Document was processed and extracted (COMPLETED vs. FAILED) and whether an ExtractionJob was finished successfully (SUCCEEDED vs. FAILED).
+
+Output validation with Ajv
+LLM responses are validated against stored JSON Schema using Ajv. If the model returns wrong types, missing required fields, etc., the job fails with an error.
+
+Retry / Reprocessing logic with audit trail
+Each processing (/ reprocessing) attempt creates a new ExtractionJob row, on failures SDES retries up to MAX_RETRY_ATTEMPTS times before marking a document failed. Every attempt's status and error message is stored in db.
+
+Auto-classification
+If no schemaId is provided, SDES asks the LLM to classify the document regardless of input size and structure against all available schemas and routes it automatically.
+
+---
+
