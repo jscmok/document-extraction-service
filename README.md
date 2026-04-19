@@ -95,3 +95,28 @@ document.routes.ts:
 
 app.ts:
 - mounts documentroutes at /documents
+
+# Milestone 4
+
+async engine that makes the 202 pattern real — worker picks up queued jobs and runs the extraction pipeline
+
+utils/text-extractor.ts:
+- reads .txt file from disk, returns content as a string
+- only code touching the file system for content
+
+lib/openai.ts:
+- singleton OpenAI client, created once and reused everywhere
+
+extraction.service.ts:
+2 methods, core of service
+- extract: load doc + schema → read file text → build dynamic prompt from schema → call OpenAI → validate JSON response → upsert extractionresult
+- classifydocument: called if no schemaid → if one schema exists return it or else send to OpenAI to pick best match → fallback to first schema
+
+document.worker.ts:
+- polling loop
+- processnextjob: pick up next QUEUED job → mark job RUNNING and doc PROCESSING → call extractionservice → if success mark SUCCEEDED/COMPLETED or if failure check MAX_RETRY_ATTEMPTS → re-queue or mark FAILED
+- startworker: guards against double-start with running flag, calls poll() recursively via setTimeout in finally block so errors don't stop the loop
+- stopWorker: clean shutdown
+
+server.ts:
+- calls startworker() after DB connects
