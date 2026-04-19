@@ -1,5 +1,5 @@
 import Ajv from 'ajv';
-import { openai } from '../lib/openai';
+import { anthropic } from '../lib/anthropic';
 import { prisma } from '../lib/prisma';
 import { schemaRepository } from '../repositories/schema.repository';
 
@@ -47,22 +47,22 @@ export const extractionService = {
     const schemaDefinition = schema.definition as Record<string, unknown>;
     const prompt = buildPrompt(schemaDefinition, text);
 
-    // Call OpenAI
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+    const completion = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 4096,
       messages: [{ role: 'user', content: prompt }],
-      temperature: 0,
     });
 
-    const raw = completion.choices[0]?.message?.content?.trim();
-    if (!raw) throw new Error('OpenAI returned an empty response');
+    const textBlock = completion.content.find(b => b.type === 'text');
+    const raw = textBlock?.type === 'text' ? textBlock.text.trim() : '';
+    if (!raw) throw new Error('Claude returned an empty response');
 
     // Parse JSON
     let extracted: unknown;
     try {
       extracted = JSON.parse(raw);
     } catch {
-      throw new Error(`OpenAI returned invalid JSON: ${raw}`);
+      throw new Error(`Claude returned invalid JSON: ${raw}`);
     }
 
     // Validate against stored schema
@@ -104,7 +104,7 @@ export const extractionService = {
     const text = await extractText(document.storagePath);
     const excerpt = text.slice(0, 500);
 
-    // Ask OpenAI to pick the best schema
+    // Ask LLM to pick the best schema
     const schemaList = schemas
       .map((s, i) => `${i + 1}. "${s.name}" — ${s.description ?? 'no description'}`)
       .join('\n');
@@ -119,13 +119,14 @@ ${excerpt}
 
 Reply with only the schema name, exactly as written above. No explanation.`;
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+    const completion = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 256,
       messages: [{ role: 'user', content: prompt }],
-      temperature: 0,
     });
 
-    const chosen = completion.choices[0]?.message?.content?.trim();
+    const classifyBlock = completion.content.find(b => b.type === 'text');
+    const chosen = classifyBlock?.type === 'text' ? classifyBlock.text.trim() : '';
     return schemas.find((s) => s.name === chosen) ?? schemas[0];
   },
 };
