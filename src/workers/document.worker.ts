@@ -1,66 +1,59 @@
-import { env } from '../config/env';
+import { Worker, Job } from 'bullmq';
+import { connection, EXTRACTION_QUEUE, ExtractionJobData } from '../lib/queue';
 import { documentRepository } from '../repositories/document.repository';
 import { jobRepository } from '../repositories/job.repository';
 import { extractionService } from '../services/extraction.service';
 
-let running = false;
+let worker: Worker | null = null;
 
-async function processNextJob(): Promise<void> {
-  const job = await jobRepository.findNextQueued();
-  if (!job) return;
+async function processJob(job: Job<ExtractionJobData>): Promise<void> {
+  const { documentId } = job.data;
+  console.log(`[worker] processing job ${job.id} for document ${documentId}`);
 
-  const { document } = job;
-  console.log(`[worker] picking up job ${job.id} for document ${document.id}`);
-
-  // Mark job and document as in-progress
-  await jobRepository.updateStatus(job.id, 'RUNNING');
-  await documentRepository.updateStatus(document.id, 'PROCESSING');
+  await documentRepository.updateStatus(documentId, 'PROCESSING');
+  const dbJob = await jobRepository.create(documentId, job.attemptsMade + 1);
 
   try {
-    await extractionService.extract(document.id);
-
-    await jobRepository.updateStatus(job.id, 'SUCCEEDED');
-    await documentRepository.updateStatus(document.id, 'COMPLETED');
-    console.log(`[worker] completed document ${document.id}`);
+    await jobRepository.updateStatus(dbJob.id, 'RUNNING');
+    await extractionService.extract(documentId);
+    await jobRepository.updateStatus(dbJob.id, 'SUCCEEDED');
+    await documentRepository.updateStatus(documentId, 'COMPLETED');
+    console.log(`[worker] completed document ${documentId}`);
   } catch (err: any) {
-    console.error(`[worker] failed document ${document.id}:`, err.message);
-
-    const attempts = await jobRepository.countAttempts(document.id);
-
-    if (attempts < env.MAX_RETRY_ATTEMPTS) {
-      // Re-queue for retry
-      console.log(`[worker] re-queuing document ${document.id} (attempt ${attempts + 1})`);
-      await jobRepository.updateStatus(job.id, 'FAILED', err.message);
-      await documentRepository.updateStatus(document.id, 'PENDING');
-      await jobRepository.create(document.id, attempts + 1);
-    } else {
-      // Give up
-      console.log(`[worker] giving up on document ${document.id} after ${attempts} attempts`);
-      await jobRepository.updateStatus(job.id, 'FAILED', err.message);
-      await documentRepository.updateStatus(document.id, 'FAILED', err.message);
-    }
+    await jobRepository.updateStatus(dbJob.id, 'FAILED', err.message);
+    const willRetry = job.attemptsMade + 1 < (job.opts.attempts ?? 1);
+    await documentRepository.updateStatus(
+      documentId,
+      willRetry ? 'PENDING' : 'FAILED',
+      willRetry ? undefined : err.message
+    );
+    throw err;
   }
 }
 
 export function startWorker(): void {
-  if (running) return;
-  running = true;
-  console.log(`[worker] started — polling every ${env.WORKER_POLL_INTERVAL_MS}ms`);
+  if (worker) return;
 
-  const poll = async () => {
-    try {
-      await processNextJob();
-    } catch (err) {
-      console.error('[worker] unexpected error in poll cycle:', err);
-    } finally {
-      if (running) setTimeout(poll, env.WORKER_POLL_INTERVAL_MS);
-    }
-  };
+  worker = new Worker(EXTRACTION_QUEUE, processJob, {
+    connection,
+    concurrency: 2,
+  });
 
-  poll();
+  worker.on('completed', (job) => {
+    console.log(`[worker] job ${job.id} completed`);
+  });
+
+  worker.on('failed', (job, err) => {
+    console.error(`[worker] job ${job?.id} failed:`, err.message);
+  });
+
+  console.log('[worker] BullMQ worker started — event-driven, no polling');
 }
 
-export function stopWorker(): void {
-  running = false;
-  console.log('[worker] stopped');
+export async function stopWorker(): Promise<void> {
+  if (worker) {
+    await worker.close();
+    worker = null;
+    console.log('[worker] stopped');
+  }
 }
