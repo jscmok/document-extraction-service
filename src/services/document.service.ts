@@ -1,6 +1,7 @@
 import { documentRepository } from '../repositories/document.repository';
 import { jobRepository } from '../repositories/job.repository';
 import { schemaRepository } from '../repositories/schema.repository';
+import { extractionQueue } from '../lib/queue';
 import { computeFileHash } from '../utils/hash';
 import { DocumentResponse, DocumentStatusResponse } from '../types/document.types';
 
@@ -43,8 +44,14 @@ export const documentService = {
       schemaId,
     });
 
-    // Queue a job for async processing
-    await jobRepository.create(document.id);
+    // // Queue a job for async processing
+    // await jobRepository.create(document.id);
+
+    // Enqueue via BullMQ for async processing
+    await extractionQueue.add('extract', { documentId: document.id, attemptNumber: 1 }, {
+      attempts: 3,
+      backoff: { type: 'exponential', delay: 2000 },
+    });
 
     return toResponse(document);
   },
@@ -96,7 +103,11 @@ export const documentService = {
     }
 
     await documentRepository.updateStatus(id, 'PENDING');
-    await jobRepository.create(id);
+    //await jobRepository.create(id);
+    await extractionQueue.add('extract', { documentId: id, attemptNumber: 1 }, {
+      attempts: 3,
+      backoff: { type: 'exponential', delay: 2000 },
+    });
 
     return toResponse({ ...doc, status: 'PENDING', errorMessage: null });
   },

@@ -1,4 +1,3 @@
-
 import 'dotenv/config';
 import { prisma } from './lib/prisma';
 import { startWorker, stopWorker } from './workers/document.worker';
@@ -11,13 +10,13 @@ async function main() {
 
   process.on('SIGTERM', async () => {
     console.log('[worker process] SIGTERM received, shutting down');
-    stopWorker();
+    await stopWorker();
     process.exit(0);
   });
 
   process.on('SIGINT', async () => {
     console.log('[worker process] SIGINT received, shutting down');
-    stopWorker();
+    await stopWorker();
     process.exit(0);
   });
 }
