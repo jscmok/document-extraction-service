@@ -1,5 +1,4 @@
 import { documentRepository } from '../repositories/document.repository';
-import { jobRepository } from '../repositories/job.repository';
 import { schemaRepository } from '../repositories/schema.repository';
 import { extractionQueue } from '../lib/queue';
 import { computeFileHash } from '../utils/hash';
@@ -19,6 +18,28 @@ function toResponse(doc: any): DocumentResponse {
 }
 
 export const documentService = {
+  async uploadFromPath(data: {
+    originalFileName: string;
+    mimeType: string;
+    storagePath: string;
+    contentHash: string;
+    schemaId: string;
+  }): Promise<DocumentResponse> {
+    // Idempotency — same filing fetched twice returns existing document
+    const existing = await documentRepository.findByHash(data.contentHash);
+    if (existing) return toResponse(existing);
+
+    const document = await documentRepository.create(data);
+
+    await extractionQueue.add(
+      'extract',
+      { documentId: document.id, attemptNumber: 1 },
+      { attempts: 3, backoff: { type: 'exponential', delay: 2000 } }
+    );
+
+    return toResponse(document);
+  },
+  
   async upload(file: Express.Multer.File, schemaId?: string): Promise<DocumentResponse> {
     // Validate schema exists if provided
     if (schemaId) {
@@ -43,9 +64,6 @@ export const documentService = {
       contentHash,
       schemaId,
     });
-
-    // // Queue a job for async processing
-    // await jobRepository.create(document.id);
 
     // Enqueue via BullMQ for async processing
     await extractionQueue.add('extract', { documentId: document.id, attemptNumber: 1 }, {
@@ -103,7 +121,6 @@ export const documentService = {
     }
 
     await documentRepository.updateStatus(id, 'PENDING');
-    //await jobRepository.create(id);
     await extractionQueue.add('extract', { documentId: id, attemptNumber: 1 }, {
       attempts: 3,
       backoff: { type: 'exponential', delay: 2000 },
