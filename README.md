@@ -5,6 +5,14 @@ A schema-driven document extraction service (SDES) that receives schemas, ingest
 Multiple document types via runtime schema definition:
 The service supports any document type (eg. invoice, contract, employees, medical record, etc). Users define schemas via POST /schemas using standard JSON Schema format that are stored in the database. SDES builds extraction prompts dynamically at runtime. Adding a new document type is a single API call, not a deployment.
 
+# Enhancement
+
+Split API server and worker into separate processes (src/server.ts, src/worker.ts)
+BullMQ and Upstash Redis in place of DB-backed queue (event-driven queue)
+ExtractionJob table now serves as an audit trail instead of a queue.
+SEC EDGAR integration to fetch financial filings by tickers.
+S3 noted for prod file storage solution (currently local disk)
+
 ---
 
 ## How it works
@@ -141,6 +149,7 @@ GET    /documents/:id              Get document metadata
 GET    /documents/:id/status       Get processing status
 GET    /documents/:id/result       Get extracted data
 POST   /documents/:id/reprocess    Re-queue for extraction
+GET    /filings/:ticker            Fetch SEC 10-K filing and queue for extraction
 ```
 
 **Upload document example:**
@@ -207,8 +216,3 @@ If no schemaId is provided, SDES asks the LLM to classify the document regardles
 
 ---
 
-# Enhancement
-
-BullMQ and Redis in place of DB-backed queue.
-ExtractionJob table now serves as an audit trail instead of a queue.
-Added additional src files for SEC EDGAR integration to fetch financial filings by tickers.
