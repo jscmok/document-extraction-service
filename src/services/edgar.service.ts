@@ -54,7 +54,6 @@ async function getXbrlFinancials(cik: string): Promise<Record<string, number>> {
   const usGaap = data.facts?.['us-gaap'] ?? {};
 
   // Collect the most recent 10-K entry across all candidate concepts — companies
-  // change XBRL tags over time, so the freshest data may not be in the first concept
   function latestAnnual(...concepts: string[]): number {
     let best: { end: string; val: number } | null = null;
     for (const concept of concepts) {
