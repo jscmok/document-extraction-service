@@ -207,3 +207,8 @@ If no schemaId is provided, SDES asks the LLM to classify the document regardles
 
 ---
 
+# Enhancement
+
+BullMQ and Redis in place of DB-backed queue.
+ExtractionJob table now serves as an audit trail instead of a queue.
+Added additional src files for SEC EDGAR integration to fetch financial filings by tickers.
